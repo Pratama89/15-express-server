@@ -1,4 +1,34 @@
 
-  <h1>Hai ini adalah Halaman Kontak</h1>
-  <h2>Silahkan masukkan nama anda</h2>
-  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab quibusdam eum consectetur, voluptatem odio blanditiis.</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h2>Daftar Kontak</h2>
+        <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">No</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Alamat</th>
+      <th scope="col">No HP</th>
+      <th scope="col">Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% contacts.forEach((contact, i) => { i++ %>
+      <tr>
+        <th scope="row"><%= i++  %></th>
+        <td><%= contact.nama  %>  </td>
+        <td><%= contact.alamat  %></td>
+        <td><%= contact.noHp  %></td>
+        <td>
+          <a href="/contact/<%= contact.nama %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i> detail</a>
+        </td>
+      </tr>
+     
+    <% }) %>
+    
+  </tbody>
+</table>
+      </div>
+    </div>
+  </div>

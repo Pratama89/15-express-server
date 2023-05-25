@@ -1,6 +1,7 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts')
-const morgan = require("morgan");
+const { loadContact } = require("./utils/contacts");
+
 const app = express();
 const port = 3000;
 
@@ -9,16 +10,9 @@ app.set("view engine", "ejs");
 
 // Third-party Middleware
 app.use(expressLayouts);
-app.use(morgan("dev"));
 
 // Built-in Middleware
 app.use(express.static("public"));
-
-// Application Middleware
-app.use((req, res, next) => {
-  console.log("Time: ", Date.now());
-  next();
-});
 
 app.get("/", (req, res) => {
   res.render("index", {
@@ -35,9 +29,22 @@ app.get("/about", (req, res) => {
 });
 
 app.get("/contact", (req, res) => {
+  const contacts = loadContact();
+
   res.render("contact", {
     layout: "layouts/main-layout",
     title: "Halaman Contact",
+    contacts,
+  });
+});
+
+app.get("/contact/:nama", (req, res) => {
+  const contact = findContact(req.params.nama);
+
+  res.render("detail", {
+    layout: "layouts/main-layout",
+    title: "Halaman Detail Contact",
+    contact,
   });
 });
 
