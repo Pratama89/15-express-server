@@ -19,4 +19,11 @@ const loadContact = () => {
   return contacts;
 };
 
-module.exports = { loadContact  };
+// cari kontak berdasarkan nama
+const findContact = (nama) => {
+  const contacts = loadContact();
+  const contact = contacts.find((contact) => contact.nama.toLowerCase() === nama.toLowerCase());
+  return contact;
+}
+
+module.exports = { loadContact, findContact  };
