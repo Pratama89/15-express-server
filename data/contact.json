@@ -1,1 +1,5 @@
-[{"nama":"Pratama","alamat":"Kp. Pulo","no_HP":"0854758542"},{"nama":"Sari","alamat":"Kp. Dukuh","no_HP":"085478458855"}]
+[
+  { "nama": "Pratama", "alamat": "Kp. Pulo", "no_HP": "0854758542" },
+  { "nama": "Sari", "alamat": "Kp. Dukuh", "no_HP": "085478458855" },
+  { "nama": "Kirana", "alamat": "Karangtengah", "no_HP": "08574485488" }
+]

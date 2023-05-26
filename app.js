@@ -1,6 +1,7 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts')
-const { loadContact, findContact, addContact } = require("./utils/contacts");
+const { loadContact, findContact, addContact, cekDuplikat } = require("./utils/contacts");
+const { body, validationResult, check } = require("express-validator");
 
 const app = express();
 const port = 3000;
@@ -9,7 +10,7 @@ const port = 3000;
 app.set("view engine", "ejs");
 app.use(expressLayouts); // Third-party Middleware
 app.use(express.static("public")); // Built-in Middleware
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.render("index", {
@@ -36,18 +37,45 @@ app.get("/contact", (req, res) => {
 });
 
 // Halaman Form tambah data kontak
-app.get('/contact/add', (req, res) => {
-  res.render('add-contact', {
+app.get("/contact/add", (req, res) => {
+  res.render("add-contact", {
     layout: "layouts/main-layout",
     title: "Form Tambah Contact",
-  })
+  });
 });
 
 // Proses Data kontak
-app.post('/contact', (req, res) => {
-  addContact(req.body);
-  res.redirect('/contact');
-})
+app.post(
+  "/contact",
+  [
+    body("nama").custom((value) => {
+      const duplikat = cekDuplikat(value);
+      if (duplikat) {
+        throw new Error("Nama kontak sudah digunakan!");
+      }
+      return true;
+    }),
+
+    check("alamat", "Alamat tidak sesuai").isString(),
+    check("no_HP", "No HPtidak sesuai").isMobilePhone("id-ID"),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // return res.status(400).json({
+      //   errors: errors.array(),
+      // });
+      res.render("add-contact", {
+        layout: "layouts/main-layout",
+        title: "Form Tambah Data Contact",
+        errors: errors.array(),
+      });
+    } else {
+      addContact(req.body);
+      res.redirect("/contact");
+    }
+  }
+);
 
 // Halaman detail kontak
 app.get("/contact/:nama", (req, res) => {
