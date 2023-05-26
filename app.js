@@ -1,18 +1,15 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts')
-const { loadContact, findContact } = require("./utils/contacts");
+const { loadContact, findContact, addContact } = require("./utils/contacts");
 
 const app = express();
 const port = 3000;
 
 // Gunakan EJS
 app.set("view engine", "ejs");
-
-// Third-party Middleware
-app.use(expressLayouts);
-
-// Built-in Middleware
-app.use(express.static("public"));
+app.use(expressLayouts); // Third-party Middleware
+app.use(express.static("public")); // Built-in Middleware
+app.use(express.urlencoded());
 
 app.get("/", (req, res) => {
   res.render("index", {
@@ -38,6 +35,21 @@ app.get("/contact", (req, res) => {
   });
 });
 
+// Halaman Form tambah data kontak
+app.get('/contact/add', (req, res) => {
+  res.render('add-contact', {
+    layout: "layouts/main-layout",
+    title: "Form Tambah Contact",
+  })
+});
+
+// Proses Data kontak
+app.post('/contact', (req, res) => {
+  addContact(req.body);
+  res.redirect('/contact');
+})
+
+// Halaman detail kontak
 app.get("/contact/:nama", (req, res) => {
   const contact = findContact(req.params.nama);
 
