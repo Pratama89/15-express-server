@@ -1,6 +1,6 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts')
-const { loadContact, findContact, addContact, cekDuplikat, deleteContact } = require("./utils/contacts");
+const { loadContact, findContact, addContact, cekDuplikat, deleteContact, updateContacts } = require("./utils/contacts");
 const { body, validationResult, check } = require("express-validator");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -72,7 +72,7 @@ app.post(
     }),
 
     check("alamat", "Alamat tidak sesuai").isString(),
-    check("no_HP", "No HPtidak sesuai").isMobilePhone("id-ID"),
+    check("no_HP", "No HP tidak sesuai").isMobilePhone("id-ID"),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -115,11 +115,51 @@ app.get("/contact/delete/:nama", (req, res) => {
 
 // Halaman Form ubah data kontak
 app.get("/contact/edit/:nama", (req, res) => {
-  res.render("adit-contact", {
+  const contact = findContact(req.params.nama);
+
+  res.render("edit-contact", {
     layout: "layouts/main-layout",
     title: "Form Ubah Data Contact",
+    contact,
   });
 });
+
+// Proses Ubah Data
+app.post(
+  "/contact/update",
+  [
+    body("nama").custom((value, {req}) => {
+      const duplikat = cekDuplikat(value);
+      if (value !== req.body.oldNama && duplikat) {
+        throw new Error("Nama kontak sudah digunakan!");
+      }
+      return true;
+    }),
+
+    check("alamat", "Alamat tidak sesuai").isString(),
+    check("no_HP", "No HP tidak sesuai").isMobilePhone("id-ID"),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // return res.status(400).json({
+      //   errors: errors.array(),
+      // });
+      res.render("edit-contact", {
+        layout: "layouts/main-layout",
+        title: "Form Tambah Data Contact",
+        errors: errors.array(),
+        contact: req.body,
+      });
+    } else {
+      
+      updateContacts(req.body);
+      // kirimkan Flash massage
+      req.flash("msg", "Data kontak berhasil diubah!");
+      res.redirect("/contact");
+    }
+  }
+);
 
 // Halaman detail kontak
 app.get("/contact/:nama", (req, res) => {

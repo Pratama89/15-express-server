@@ -1,0 +1,36 @@
+<div class="container mt-3">
+    <div class="roe">
+        <div class="col-md-8">
+            <h2>Form Ubah Data Kontak</h2>
+
+            <% if (typeof errors != 'undefined') { %>
+             <div class="alert alert-warning" role="alert">
+              <ul>
+                <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>                 
+                <% }) %>
+            </ul>
+            </div>
+            <% } %>
+
+            <form method="post" action="/contact/update">
+                <input type="hidden" name="oldNama" value="<%= contact.oldNama || contact.nama %>">
+                <div class="mb-3">
+                  <label for="nama" class="form-label">Nama</label>
+                  <input type="text" class="form-control" id="nama" name="nama" required value="<%= contact.nama %>"/>
+                  
+                </div>
+                <div class="mb-3">
+                  <label for="alamat" class="form-label">Alamat</label>
+                  <input type="text" class="form-control" id="alamat" name="alamat" required value="<%= contact.alamat %>"/>
+                </div>
+                <div class="mb-3">
+                  <label for="no HP" class="form-label">Handphone</label>
+                  <input type="text" class="form-control" id="no HP" name="no_HP" required value="<%= contact.no_HP %>"/>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Ubah Kontak</button>
+              </form>
+        </div>
+    </div>
+</div>
