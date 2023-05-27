@@ -1,6 +1,6 @@
 const express = require("express");
 const expressLayouts = require('express-ejs-layouts')
-const { loadContact, findContact, addContact, cekDuplikat } = require("./utils/contacts");
+const { loadContact, findContact, addContact, cekDuplikat, deleteContact } = require("./utils/contacts");
 const { body, validationResult, check } = require("express-validator");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -93,6 +93,33 @@ app.post(
     }
   }
 );
+
+// proses delete kontak
+app.get("/contact/delete/:nama", (req, res) => {
+  const contact = findContact(req.params.nama);
+
+  // Jika kontak tidak ada
+  if (!contact) {
+    res.status(404);
+    res.render("error404", {
+      layout: "layouts/main-layout",
+      title: "Error 404",
+    });
+  } else {
+    deleteContact(req.params.nama);
+    // kirimkan Flash massage
+    req.flash("msg", "Data kontak berhasil dihapus");
+    res.redirect("/contact");
+  }
+});
+
+// Halaman Form ubah data kontak
+app.get("/contact/edit/:nama", (req, res) => {
+  res.render("adit-contact", {
+    layout: "layouts/main-layout",
+    title: "Form Ubah Data Contact",
+  });
+});
 
 // Halaman detail kontak
 app.get("/contact/:nama", (req, res) => {
